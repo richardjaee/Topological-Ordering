@@ -25,21 +25,22 @@ Go into this folder and get a list of all the branch names, plus their commit ha
 This will form a list of what will eventually become your starting commits for creating your commit graph.
 '''
 def local_branch_names(git_dir):
-    branch_list = os.path.join(git_dir, 'refs/heads/')
-    os.chdir(branch_list)
-    
-    local_branches = {}
-    for root, dirs, files in os.walk('.'):
-        for name in files:
-            branch_file = os.path.join(root,name)
-            branch_hash = open(branch_file, 'r').read().strip()
-            if branch_hash not in local_branches:
-                local_branches[branch_hash] = set()
-            local_branches[branch_hash].add(branch_file[2:])
 
- 
-    return local_branches
+    branch_list = os.path.join(git_path, '.git/refs/heads/')
 
+    c_hash = {}
+
+    for paths, dirs, files in os.walk(branch_list):
+        for file_name in files:
+            branch_file = os.path.join(paths, file_name)
+            branch_hash = open(branch_file, 'r').read().strip('\n')
+
+            if branch_hash not in commit_hash:
+                c_hash[file_name] = set()
+
+            c_hash[file_name].append(branch_file)
+
+    return c_hash
 
 class CommitNode:
     def __init__(self, commit_hash):
